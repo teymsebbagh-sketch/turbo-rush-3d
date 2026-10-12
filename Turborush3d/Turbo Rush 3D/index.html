@@ -23,11 +23,44 @@ button.sec{background:#26304f;font-size:16px;padding:11px 20px}
 .row{display:flex;gap:8px;margin:8px 0 4px}
 .row button{padding:10px 4px;font-size:15px;background:#26304f;flex:1;margin:0}
 .row button.on{background:var(--ac)}
+
+/* ===== Écran d'accueil pro ===== */
+.card{position:relative;z-index:1}
+.card.home{background:none;border:0;box-shadow:none;width:min(520px,92vw);transform:translateY(-6vh)}
+#menu::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 65%,rgba(255,61,90,.2),transparent 55%),radial-gradient(ellipse at center,transparent 30%,rgba(5,8,16,.9) 100%);animation:glow 4s ease-in-out infinite alternate;pointer-events:none}
+#menu::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 120px,rgba(255,255,255,.04) 120px 122px);animation:slide 2.5s linear infinite;pointer-events:none}
+@keyframes glow{to{opacity:.6}}
+@keyframes slide{to{background-position:-122px 0}}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes shine{to{background-position:300% 0}}
+@keyframes pulse{50%{box-shadow:0 0 30px 6px rgba(255,61,90,.55)}}
+.title{font-size:clamp(38px,12vw,68px);font-style:italic;font-weight:900;letter-spacing:2px;line-height:1;margin:0 0 10px;background:linear-gradient(90deg,#fff,#ff3d5a,#ffb347,#fff);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:shine 5s linear infinite;filter:drop-shadow(0 0 16px rgba(255,61,90,.55))}
+.title em{display:block;font-style:normal;font-size:.62em;letter-spacing:.45em}
+.card:not(.still)>*:not(.title){animation:rise .5s both}
+.card:not(.still)>:nth-child(2){animation-delay:.1s}.card:not(.still)>:nth-child(3){animation-delay:.2s}
+.card:not(.still)>:nth-child(4){animation-delay:.3s}.card:not(.still)>:nth-child(5){animation-delay:.4s}.card:not(.still)>:nth-child(6){animation-delay:.5s}
+button{transition:transform .15s,filter .2s}
+button:hover{filter:brightness(1.12)}
+#card button{text-transform:uppercase;letter-spacing:1.5px}
+#card .row button{text-transform:none;letter-spacing:0}
+button.main{font-size:24px;padding:18px 20px;letter-spacing:3px;background:linear-gradient(135deg,#ff3d5a,#ff7a3d)}
+.card:not(.still)>button.main{animation:rise .5s both,pulse 2s .8s infinite}
+.card.still>button.main{animation:pulse 2s infinite}
+.two{display:flex;gap:10px;margin-top:10px}
+.two button{margin:0;flex:1}
+.best{color:#ffd27a;font-weight:700;margin:16px 0 4px}
+.keys{font-size:12px;color:#8e98b8;line-height:1.6}
+.sws{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:16px 0 6px}
+.sw{width:52px;height:52px;border-radius:50%;padding:0;box-shadow:0 0 0 2px #3a4468}
+.sw:hover{transform:scale(1.12)}
+.sw.on{box-shadow:0 0 0 3px #fff,0 0 22px currentColor}
+#gear{width:auto;height:auto;border-radius:12px;padding:8px 14px;font-size:15px;letter-spacing:1px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important}}
 </style>
 </head>
 <body>
 <div id="c"></div>
-<div id="hud"><div id="sc">0</div><button id="gear" aria-label="Settings">⚙</button><div id="sp">0</div></div>
+<div id="hud"><div id="sc">0</div><button id="gear" aria-label="Pause">⏸ PAUSE</button><div id="sp">0</div></div>
 <div id="menu"><div class="card" id="card"></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -40,6 +73,9 @@ fr:{play:'Jouer',best:'Meilleur score',tip:`← → / A D ou touche la moitié g
 en:{play:'Play',best:'Best score',tip:'← → / A D or touch the left/right half of the screen',sub:'Dodge the traffic and beat your record!',crash:'Crash!',dist:'Distance',record:'Record',again:'Play again',settings:'Settings',quality:'Quality',lang:'Language',low:'Low',med:'Medium',high:'High',back:'Back',resume:'Resume',m:'m',kmh:'km/h'},
 ar:{play:'العب',best:'أفضل نتيجة',tip:'استخدم ← → أو A D أو المس نصف الشاشة الأيمن أو الأيسر',sub:'تفادَ السيارات وحطّم رقمك القياسي!',crash:'تحطّمت!',dist:'المسافة',record:'الرقم القياسي',again:'أعد اللعب',settings:'الإعدادات',quality:'الجودة',lang:'اللغة',low:'منخفضة',med:'متوسطة',high:'عالية',back:'رجوع',resume:'استئناف',m:'م',kmh:'كم/س'}
 };
+Object.assign(L.fr,{tip:'← → / A D : tourner · P / Échap : pause · R : recommencer<br>Mobile : touche la moitié gauche ou droite',restart:'Recommencer',menu:'Menu',car:'Voiture',paused:'Pause'});
+Object.assign(L.en,{tip:'← → / A D: steer · P / Esc: pause · R: restart<br>Mobile: touch the left or right half',restart:'Restart',menu:'Menu',car:'Car',paused:'Pause'});
+Object.assign(L.ar,{tip:'← → / A D: التوجيه · P / Esc: إيقاف مؤقت · R: إعادة<br>الجوال: المس النصف الأيمن أو الأيسر',restart:'إعادة',menu:'القائمة',car:'السيارة',paused:'إيقاف'});
 let lang=ls.g('tr3d_l');if(!L[lang])lang=L[(navigator.language||'fr').slice(0,2)]?(navigator.language||'fr').slice(0,2):'en';
 let quality=ls.g('tr3d_q');if(!['low','med','high'].includes(quality))quality='med';
 let best=+ls.g('tr3d_best')||0;
@@ -144,7 +180,10 @@ function mkCar(color,truck,player){
   const bl=new THREE.Mesh(truck?G.blobT:G.blobC,M.blob);bl.rotation.x=-Math.PI/2;bl.position.y=.05;g.add(bl);
   return g;
 }
-const player=mkCar(0xff3d5a,false,true);scene.add(player);
+const CARS=[0xff3d5a,0x2d9cdb,0xf2c94c,0x27ae60,0xf5f5f5,0x9b51e0];
+let carIdx=+ls.g('tr3d_car')||0;if(!(carIdx>=0&&carIdx<CARS.length))carIdx=0;
+let player=mkCar(CARS[carIdx],false,true);scene.add(player);
+function setCar(i){scene.remove(player);carIdx=i;ls.s('tr3d_car',i);player=mkCar(CARS[i],false,true);scene.add(player)}
 const traffic=[];
 const colors=[0x2d9cdb,0xf2c94c,0x27ae60,0xbdbdbd,0x9b51e0,0xf2994a];
 const clearTraffic=()=>{traffic.forEach(t=>scene.remove(t.m));traffic.length=0};
@@ -171,46 +210,69 @@ const S={run:false,paused:false,attract:true,speed:0,dist:0,x:0,vx:0,spawn:0,sha
 const K={l:0,r:0,pl:0,pr:0};
 const kc=()=>{K.l=K.r=K.pl=K.pr=0};
 const hide=()=>{$('menu').style.display='none'};
-function card(h){$('card').innerHTML=h;$('menu').style.display='flex'}
+function card(h,k){
+  k=k||(h.indexOf('data-q')>-1?'set':'');
+  const m=$('menu'),c=$('card'),same=k==='set'&&m.style.display==='flex'&&c.dataset.k==='set';
+  c.dataset.k=k;c.className='card '+k+(same?' still':'');c.innerHTML=h;m.style.display='flex';
+}
 function renderHUD(){const t=T();$('sc').textContent=Math.floor(S.dist)+' '+t.m;$('sp').textContent=Math.floor(S.speed*2)+' '+t.kmh}
-function applyLang(){document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';renderHUD()}
+function applyLang(){document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';$('gear').textContent='⏸ '+T().paused;renderHUD()}
 function showMenu(title,sub,btn,fn){
-  card(`<h1>${title}</h1><p>${sub}</p><button id="go">${btn}</button><button class="sec" id="st">⚙ ${T().settings}</button>`);
-  $('go').onclick=fn;$('st').onclick=showSettings;
+  const t=T();
+  card(`<h1>${title}</h1><p>${sub}</p><button class="main" id="go">↻ ${btn}</button><button class="sec" id="st">⚙ ${t.settings}</button><button class="sec" id="hm">⌂ ${t.menu}</button>`,'over');
+  $('go').onclick=fn;$('st').onclick=showSettings;$('hm').onclick=home;
 }
 function showSettings(){
   const t=T();
   const opt=(arr,cur,k)=>'<div class="row">'+arr.map(a=>`<button class="${a[0]===cur?'on':''}" data-${k}="${a[0]}">${a[1]}</button>`).join('')+'</div>';
-  card(`<h1>${t.settings}</h1><h3>${t.quality}</h3>${opt([['low',t.low],['med',t.med],['high',t.high]],quality,'q')}<h3>${t.lang}</h3>${opt([['fr','Français'],['en','English'],['ar','العربية']],lang,'l')}<button id="bk">${S.run?t.resume:t.back}</button>`);
+  card(`<h1>${t.settings}</h1><h3>${t.quality}</h3>${opt([['low',t.low],['med',t.med],['high',t.high]],quality,'q')}<h3>${t.lang}</h3>${opt([['fr','Français'],['en','English'],['ar','العربية']],lang,'l')}<button id="bk">${t.back}</button>`);
   document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{quality=b.dataset.q;ls.s('tr3d_q',quality);applyQ();showSettings()});
   document.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{lang=b.dataset.l;ls.s('tr3d_l',lang);applyLang();showSettings()});
-  $('bk').onclick=()=>{if(S.run){S.paused=false;hide()}else home()};
+  $('bk').onclick=()=>{if(S.run)showPause();else home()};
 }
 function home(){
-  const t=T();clearTraffic();S.run=false;S.paused=false;S.attract=true;S.dist=0;S.speed=0;S.x=0;S.vx=0;renderHUD();
-  showMenu('TURBO <span>RUSH</span> 3D',`${t.sub}<br>${t.best} : ${best} ${t.m}<br>${t.tip}`,t.play,reset);
+  const t=T();clearTraffic();S.run=false;S.paused=false;S.attract=true;S.dist=0;S.speed=0;S.x=0;S.vx=0;S.shake=0;renderHUD();
+  $('hud').style.visibility='hidden';
+  card(`<h1 class="title">TURBO RUSH<em>3D</em></h1><p>${t.sub}</p><button class="main" id="go">▶ ${t.play}</button><div class="two"><button class="sec" id="cr">🚗 ${t.car}</button><button class="sec" id="st">⚙ ${t.settings}</button></div><div class="best">${t.best} : ${best} ${t.m}</div><div class="keys">${t.tip}</div>`,'home');
+  $('go').onclick=reset;$('cr').onclick=showCars;$('st').onclick=showSettings;
+}
+function showCars(){
+  const t=T();
+  card(`<h1>${t.car}</h1><div class="sws">${CARS.map((c,i)=>{const h='#'+c.toString(16).padStart(6,'0');return `<button class="sw${i===carIdx?' on':''}" data-c="${i}" aria-label="${t.car} ${i+1}" style="background:${h};color:${h}"></button>`}).join('')}</div><button class="sec" id="bk">${t.back}</button>`,'car');
+  document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{setCar(+b.dataset.c);document.querySelectorAll('[data-c]').forEach(x=>x.classList.toggle('on',x===b))});
+  $('bk').onclick=home;
 }
 function reset(){
-  clearTraffic();kc();Object.assign(S,{run:true,paused:false,attract:false,speed:30,dist:0,x:0,vx:0,spawn:0,shake:0});hide();renderHUD();
+  $('hud').style.visibility='visible';clearTraffic();kc();Object.assign(S,{run:true,paused:false,attract:false,speed:30,dist:0,x:0,vx:0,spawn:0,shake:0});hide();renderHUD();
 }
 function crash(){
   const t=T(),d=Math.floor(S.dist);S.run=false;S.shake=1;kc();
   if(d>best){best=d;ls.s('tr3d_best',best)}
   showMenu(t.crash,`${t.dist} : ${d} ${t.m}<br>${t.record} : ${best} ${t.m}`,t.again,reset);
 }
+function resume(){if(S.run&&S.paused){S.paused=false;hide()}}
+function showPause(){
+  const t=T();
+  card(`<h1>${t.paused}</h1><button class="main" id="rs">▶ ${t.resume}</button><button class="sec" id="rt">↻ ${t.restart}</button><button class="sec" id="st">⚙ ${t.settings}</button><button class="sec" id="hm">⌂ ${t.menu}</button>`,'pause');
+  $('rs').onclick=resume;$('rt').onclick=reset;$('st').onclick=showSettings;$('hm').onclick=home;
+}
 function pauseToggle(){
-  if(S.run&&!S.paused){S.paused=true;kc();showSettings()}
-  else if(S.run&&S.paused){S.paused=false;hide()}
+  if(S.run&&!S.paused){S.paused=true;kc();showPause()}
+  else resume();
 }
 $('gear').onpointerdown=e=>e.stopPropagation();
-$('gear').onclick=pauseToggle;
+$('gear').onclick=()=>{$('gear').blur();pauseToggle()};
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&S.run&&!S.paused)pauseToggle()});
 addEventListener('blur',kc);
 addEventListener('keydown',e=>{
   const k=e.key.toLowerCase();
   if(k==='arrowleft'||k==='a'||k==='q')K.l=1;
   if(k==='arrowright'||k==='d')K.r=1;
-  if(k==='escape'||k==='p')pauseToggle();
+  if(!e.repeat){
+    if(k==='escape'||k==='p')pauseToggle();
+    else if(k==='r'&&(S.run||S.dist>0))reset();
+    else if((k==='enter'||k===' ')&&$('menu').style.display!=='none'&&!(document.activeElement&&document.activeElement.tagName==='BUTTON')){const b=$('go')||$('rs');if(b){e.preventDefault();b.click()}}
+  }
 });
 addEventListener('keyup',e=>{
   const k=e.key.toLowerCase();
